@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Blog",
+        "url": "https://example.com"
+    },
+    {
+        "name": "Tool Collection",
+        "url": "https://tools.example.com"
+    },
+    {
+        "name": "Game Site",
+        "url": "https://game.example.com"
+    }
+]
