@@ -1,68 +1,27 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Portal</title>
+document.addEventListener("DOMContentLoaded", async () => {
+    const container = document.getElementById("sites");
 
-<style>
-:root{
-    --bg:#f5f5f5;
-    --card:#ffffff;
-    --text:#222;
-    --border:#ddd;
-    --link:#0066cc;
-}
+    try {
+        const res = await fetch("sites.json");
+        const sites = await res.json();
 
-*{
-    box-sizing:border-box;
-}
+        container.innerHTML = "";
 
-body{
-    margin:0;
-    padding:2rem;
-    background:var(--bg);
-    color:var(--text);
-    font-family:sans-serif;
-}
+        sites.forEach(site => {
+            const div = document.createElement("div");
+            div.className = "site";
 
-h1{
-    margin-top:0;
-}
+            div.innerHTML = `
+                <a href="${site.url}" target="_blank" rel="noopener">
+                    ${site.name}
+                </a>
+            `;
 
-#sites{
-    display:grid;
-    gap:12px;
-}
+            container.appendChild(div);
+        });
 
-.site{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:16px;
-}
-
-.site a{
-    color:var(--link);
-    text-decoration:none;
-    font-size:1.1rem;
-    font-weight:bold;
-}
-
-.site a:hover{
-    text-decoration:underline;
-}
-</style>
-</head>
-<body>
-
-<h1>My Websites</h1>
-
-<div id="sites">
-    <p>Loading...</p>
-</div>
-
-<script src="app.js"></script>
-
-</body>
-</html>
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = "読み込み失敗";
+    }
+});
