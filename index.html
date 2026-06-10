@@ -1,8 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Link Collection Demo</title>
+    <style>
+        .site { margin: 10px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
 <body>
-<h1>テスト</h1>
+    <h1>サイト一覧</h1>
+    <!-- ここが重要！このIDがないと「読み込み失敗」になります -->
+    <div id="sites">読み込み中...</div>
 
-<script>
-alert("JS動いてる");
-</script>
-
+    <script src="app.js"></script>
 </body>
+</html>
+2. app.js（エラーを回避する安全な記述）
+Status 304（キャッシュ成功）が出ているので、取得後の処理で落ちないよう、要素の存在チェックを追加したコードです。
+async function loadSites() {
+    const container = document.getElementById("sites");
+
+    // HTMLに要素がない場合に備えたチェック
+    if (!container) {
+        console.error("エラー: HTMLに id='sites' の要素が見つかりません。");
+        return;
+    }
+
+    try {
+        const response = await fetch("sites.json");
+        if (!response.ok) throw new Error("ファイルが見つかりません");
+        
+        const sites = await response.json();
+
+        container.innerHTML = ""; // 読み込み中表示をクリア
+
+        if (sites.length === 0) {
+            container.innerHTML = "表示するサイトがありません。";
+            return;
+        }
+
+        sites.forEach(site => {
+            const card = document.createElement("div");
+            card.className = "site";
+            card.innerHTML = `
+                <a href="${site.url}" target="_blank" rel="noopener">
+                    ${site.name}
+                </a>
+            `;
+            container.appendChild(card);
+        });
+
+    } catch (error) {
+        container.innerHTML = "<p>読み込み失敗: " + error.message + "</p>";
+        console.error("詳細エラー:", error);
+    }
+}
+
+// ページの読み込み完了を待って実行
+window.addEventListener('DOMContentLoaded', loadSites);
